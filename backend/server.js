@@ -9,11 +9,7 @@ const DOMPurify = require('dompurify')(new JSDOM().window);
 const csrf = require('csurf');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
-<<<<<<< HEAD
 const cookieParser = require('cookie-parser');
-=======
-const cookieParser = require('cookie-parser');  // Import cookie-parser
->>>>>>> 2e33eb6623be3e41c679c394cb2966b36d795b7f
 const User = require('./models/User');  // Assuming you have a User model
 
 const app = express();
@@ -27,12 +23,9 @@ app.use(helmet());
 // Set up cookie parser middleware (required for CSRF)
 app.use(cookieParser());
 
-<<<<<<< HEAD
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
 
-=======
->>>>>>> 2e33eb6623be3e41c679c394cb2966b36d795b7f
 // Setup CSRF protection (cookie-based)
 const csrfProtection = csrf({ cookie: true });
 
@@ -50,10 +43,6 @@ mongoose.connect(mongoURI)
   .then(() => console.log('MongoDB connected successfully'))
   .catch(err => console.error('MongoDB connection error:', err));
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 2e33eb6623be3e41c679c394cb2966b36d795b7f
 // Rate limiting to prevent brute force attacks on login
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -102,8 +91,6 @@ app.post('/register', async (req, res) => {
   try {
     // Save the user to the database
     await newUser.save();
-<<<<<<< HEAD
-
     console.log(`User registered successfully: 
       Full Name: ${safeFullName}, 
       ID Number: ${safeIdNumber}, 
@@ -116,21 +103,27 @@ app.post('/register', async (req, res) => {
   }
 });
 
-=======
-    res.status(201).json({ message: 'User registered successfully.' });
+// Login Route with rate limiting to prevent brute force attacks
+app.post('/login', loginLimiter, async (req, res) => {
+  const { accountNumber, password } = req.body;
+
+  try {
+    // Find user by account number
+    const user = await User.findOne({ accountNumber });
+
+    // Check if user exists and validate password
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(401).json({ message: 'Invalid credentials.' });
+    }
+
+    // Successful login logic (e.g., creating a session or JWT token)
+    res.status(200).json({ message: 'Login successful.' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Error registering user.' });
+    res.status(500).json({ message: 'Error logging in.' });
   }
 });
 
-// Login Route with rate limiting to prevent brute force attacks
-app.post('/login', loginLimiter, async (req, res) => {
-  // Placeholder for login logic
-  res.send('Login endpoint');
-});
-
->>>>>>> 2e33eb6623be3e41c679c394cb2966b36d795b7f
 // Route to get CSRF token for frontend use
 app.get('/csrf-token', (req, res) => {
   res.json({ csrfToken: req.csrfToken() });
