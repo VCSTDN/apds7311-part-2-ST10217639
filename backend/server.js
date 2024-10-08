@@ -94,7 +94,8 @@ app.post('/register', async (req, res) => {
     console.log(`User registered successfully: 
       Full Name: ${safeFullName}, 
       ID Number: ${safeIdNumber}, 
-      Account Number: ${safeAccountNumber}`);
+      Account Number: ${safeAccountNumber}, 
+      Hashed Password: ${hashedPassword}`);  // Output the hashed password
 
     return res.status(201).json({ message: 'User registered successfully.' });
   } catch (error) {
